@@ -14,4 +14,4 @@ stop:
 #	docker stop webapi-slim
 
 testpostman:
-	docker run -v postman:/etc/newman -t postman/newman:alpine run--collection="WebApi.postman_collection.json" -it
+	docker run -v postman:/etc/newman -t postman/newman:alpine -it /bin/bash

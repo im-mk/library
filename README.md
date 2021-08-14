@@ -1,25 +1,12 @@
 # library
-commonly used code/scripts
 
-# library
-commonly used code/scripts
+A library containing scriptis/templates to deply apps/services instantly.
 
-## Scripts
+## Dotnet
 
-### Create_Webapi.sh
+1 - script to create a webapi
+2 - webapi template
 
-This script will create a dotnet 5 webapi.
+## docker
 
-## Templates
-
-### WebApi
-
-This is a dotnet 5 webapi template.
-
-#### Features
-
-Docker
-
-Postman
-
-Makefile
+script to deploy mysql locally
