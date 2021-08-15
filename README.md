@@ -9,4 +9,4 @@ A library containing scriptis/templates to deply apps/services instantly.
 
 ## docker
 
-script to deploy mysql locally
+script to deploy various servers including mysql, postgresql etc
