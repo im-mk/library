@@ -13,5 +13,8 @@ postgres:
 pgadmin:
 	docker-compose up -d pgadmin
 
+pg:
+	docker-compose up -d postgres pgadmin
+
 stop:
 	docker-compose down

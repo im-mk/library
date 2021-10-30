@@ -2,7 +2,8 @@ version: '3.5'
 
 services:
 
-  portainer:    
+  portainer:
+    container_name: portainer
     image: portainer/portainer    
     ports:
       - 9000:9000
@@ -14,6 +15,7 @@ services:
     restart: unless-stopped
   
   postgres:
+    container_name: postgres
     image: postgres
     volumes:
       - postgres:/data/postgres
@@ -27,7 +29,8 @@ services:
       - network1
     restart: unless-stopped
 
-  pgadmin:    
+  pgadmin:
+    container_name: pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
@@ -41,6 +44,7 @@ services:
     restart: unless-stopped
 
   mysql:
+    container_name: mysql
     image: mysql
     ports:
       - 3306:3306
