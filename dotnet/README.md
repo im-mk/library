@@ -4,15 +4,11 @@
 
 ### Create_Webapi.sh
 
-This script will create a dotnet 5 webapi.
+This script will create a dotnet webapi. To create a new solution name Abc run
 
-## Templates
+``` ./create_webapi.sh Abc ```
 
-### WebApi
-
-This is a dotnet 5 webapi template.
-
-#### Features
+### Features
 
 Docker
 
