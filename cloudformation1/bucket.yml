@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Code pipeline to build the Clinical Record UI stack"
+
+Parameters:
+  Environment:
+    Description: Three character identifier for the environment, e.g. 173, snd, dev, stg, prd
+    Type: String
+
+Resources:
+
+  AppStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      VersioningConfiguration:
+        Status: Enabled
+      BucketName: !Sub ${Environment}bucket
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+        ErrorDocument: "index.html"
+      Tags:
+        - Key: "Owner"
+          Value: EMIS-X Clinical
+
+  AppStorePolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref AppStore
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:aws:s3:::"
+                  - !Ref AppStore
+                  - "/*"
+            Principal: "*"
