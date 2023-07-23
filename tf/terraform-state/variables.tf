@@ -5,7 +5,7 @@ variable "aws_region" {
 }
 
 variable "bucket_name" {
-  default     = "mk-internal-tfstate"
+  default     = "internal-tfstate"
   description = "Name of s3 bucket"
   type        = string
 }
