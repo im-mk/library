@@ -10,3 +10,7 @@ A library containing scriptis/templates to deply apps/services instantly.
 ## docker
 
 script to deploy various servers including mysql, postgresql etc
+
+## terraform
+
+create s3 bucket to hold terraform state for deployed resources.

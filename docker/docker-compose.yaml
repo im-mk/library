@@ -1,10 +1,7 @@
-version: '3.5'
-
 services:
-
   portainer:
     container_name: portainer
-    image: portainer/portainer    
+    image: portainer/portainer
     ports:
       - 9000:9000
     volumes:
@@ -13,7 +10,7 @@ services:
     networks:
       - network1
     restart: unless-stopped
-  
+
   postgres:
     container_name: postgres
     image: postgres
@@ -28,6 +25,11 @@ services:
     networks:
       - network1
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   pgadmin:
     container_name: pgadmin
@@ -36,7 +38,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-pgadmin}
     volumes:
-       - pgadmin:/root/.pgadmin
+      - pgadmin:/root/.pgadmin
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
