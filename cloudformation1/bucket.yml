@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Code pipeline to build the Clinical Record UI stack"
+Description: "Code pipeline to build application"
 
 Parameters:
   Environment:
@@ -7,7 +7,6 @@ Parameters:
     Type: String
 
 Resources:
-
   AppStore:
     Type: AWS::S3::Bucket
     Properties:
@@ -20,7 +19,7 @@ Resources:
         ErrorDocument: "index.html"
       Tags:
         - Key: "Owner"
-          Value: EMIS-X Clinical
+          Value: sample-app
 
   AppStorePolicy:
     Type: AWS::S3::BucketPolicy
