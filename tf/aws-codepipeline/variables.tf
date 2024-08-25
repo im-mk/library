@@ -4,12 +4,12 @@ variable "aws_region" {
 }
 
 variable "app_name" {
-  default = "user-service"
+  default = "test-app"
   type    = string
 }
 
 variable "repo_name" {
-  default = "user-service"
+  default = "test-app"
   type    = string
 }
 
@@ -20,6 +20,6 @@ variable "artifacts_bucket" {
 }
 
 variable "code_branch" {
-  default = "feature/boilerplate"
+  default = "main"
   type    = string
 }

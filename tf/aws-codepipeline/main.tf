@@ -8,7 +8,7 @@ terraform {
   required_version = ">= 0.14"
   backend "s3" {
     bucket = "internal-tfstate"
-    key    = "tf/code-service.tfstate"
+    key    = "${var.app_name}.tfstate"
     region = "eu-west-2"
   }
 }
@@ -21,7 +21,7 @@ data "aws_secretsmanager_secret_version" "github_token" {
   secret_id = "github/token"
 }
 
-resource "aws_ecr_repository" "go_app_ecr" {
+resource "aws_ecr_repository" "ecr" {
   name = "${var.app_name}-repo"
 }
 
@@ -102,7 +102,7 @@ resource "aws_codebuild_project" "go_app_build" {
 
   source {
     type      = "GITHUB"
-    location  = "https://github.com/im-mk/user-service.git"
+    location  = "https://github.com/im-mk/test-app.git"
     buildspec = <<EOF
 version: 0.2
 
@@ -115,17 +115,17 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${aws_ecr_repository.go_app_ecr.repository_url}
+      - aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${aws_ecr_repository.ecr.repository_url}
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t ${aws_ecr_repository.go_app_ecr.repository_url}:latest .
-      - docker tag ${aws_ecr_repository.go_app_ecr.repository_url}:latest ${aws_ecr_repository.go_app_ecr.repository_url}:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker build -t ${aws_ecr_repository.ecr.repository_url}:latest .
+      - docker tag ${aws_ecr_repository.ecr.repository_url}:latest ${aws_ecr_repository.ecr.repository_url}:$CODEBUILD_RESOLVED_SOURCE_VERSION
   post_build:
     commands:
       - echo Pushing the Docker image...
-      - docker push ${aws_ecr_repository.go_app_ecr.repository_url}:latest
-      - docker push ${aws_ecr_repository.go_app_ecr.repository_url}:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push ${aws_ecr_repository.ecr.repository_url}:latest
+      - docker push ${aws_ecr_repository.ecr.repository_url}:$CODEBUILD_RESOLVED_SOURCE_VERSION
 EOF
   }
 
@@ -247,5 +247,5 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
 }
 
 output "ecr_repository_url" {
-  value = aws_ecr_repository.go_app_ecr.repository_url
+  value = aws_ecr_repository.ecr.repository_url
 }

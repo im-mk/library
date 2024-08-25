@@ -56,5 +56,5 @@ variable "fargate_memory" {
 
 variable "app_image" {
   description = "Docker image to run in the ECS cluster"
-  default     = "898083859822.dkr.ecr.eu-west-2.amazonaws.com/user-service-ecr:latest"
+  default     = "latest"
 }
