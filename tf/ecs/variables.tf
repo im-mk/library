@@ -26,7 +26,7 @@ variable "cidr" {
 }
 
 variable "az_count" {
-  default     = 2
+  default     = 1
   description = "Number of availability zones"
 }
 
