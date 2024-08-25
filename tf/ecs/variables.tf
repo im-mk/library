@@ -5,12 +5,12 @@ variable "aws_region" {
 }
 
 variable "app_name" {
-  default = "travelu-api"
+  default = "test-app"
   type    = string
 }
 
 variable "project" {
-  default = "travelu"
+  default = "test-project"
   type    = string
 }
 
@@ -21,6 +21,7 @@ variable "app_environment" {
 
 variable "cidr" {
   description = "The CIDR block for the VPC."
+  type        = string
   default     = "10.0.0.0/16"
 }
 
@@ -30,8 +31,13 @@ variable "az_count" {
 }
 
 variable "app_port" {
-  description = "Port exposed by the docker image to redirect traffic to"
+  description = "alb port"
   default     = 80
+}
+
+variable "container_port" {
+  description = "Port exposed by the docker image to redirect traffic to"
+  default     = 8080
 }
 
 variable "health_check_path" {
@@ -50,5 +56,5 @@ variable "fargate_memory" {
 
 variable "app_image" {
   description = "Docker image to run in the ECS cluster"
-  default     = ""
+  default     = "898083859822.dkr.ecr.eu-west-2.amazonaws.com/user-service-ecr:latest"
 }

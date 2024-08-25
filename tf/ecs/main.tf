@@ -7,8 +7,8 @@ terraform {
   }
   required_version = ">= 0.14"
   backend "s3" {
-    bucket = "techreactor-tfstate"
-    key    = "travelu-api/terraform.tfstate"
+    bucket = "internal-tfstate"
+    key    = "test-app.tfstate"
     region = "eu-west-2"
   }
 }

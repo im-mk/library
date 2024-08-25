@@ -52,25 +52,56 @@ resource "aws_internet_gateway" "aws-igw" {
   }
 }
 
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.aws-vpc.id
+resource "aws_route" "public" {
+  route_table_id         = aws_vpc.aws-vpc.main_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.aws-igw.id
+}
+
+resource "aws_eip" "gw" {
+  count      = var.az_count
+  depends_on = [aws_internet_gateway.aws-igw]
 
   tags = {
-    Name        = "${var.app_name}-routing-table-public"
+    Name        = "${var.app_name}-eip-${count.index}"
     Application = var.app_name
     Project     = var.project
     Environment = var.app_environment
   }
 }
 
-resource "aws_route" "public" {
-  route_table_id         = aws_route_table.public.id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.aws-igw.id
+resource "aws_nat_gateway" "gw" {
+  count         = var.az_count
+  subnet_id     = element(aws_subnet.public.*.id, count.index)
+  allocation_id = element(aws_eip.gw.*.id, count.index)
+
+  tags = {
+    Name        = "${var.app_name}-nat-gw"
+    Application = var.app_name
+    Project     = var.project
+    Environment = var.app_environment
+  }
 }
 
-resource "aws_route_table_association" "public" {
+resource "aws_route_table" "private" {
+  count  = var.az_count
+  vpc_id = aws_vpc.aws-vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = element(aws_nat_gateway.gw.*.id, count.index)
+  }
+
+  tags = {
+    Name        = "${var.app_name}-rt-${count.index}"
+    Application = var.app_name
+    Project     = var.project
+    Environment = var.app_environment
+  }
+}
+
+resource "aws_route_table_association" "private" {
   count          = var.az_count
-  subnet_id      = element(aws_subnet.public.*.id, count.index)
-  route_table_id = aws_route_table.public.id
+  subnet_id      = element(aws_subnet.private.*.id, count.index)
+  route_table_id = element(aws_route_table.private.*.id, count.index)
 }

@@ -12,8 +12,9 @@ data "template_file" "app" {
   template = file("./templates/ecs/app.json.tpl")
 
   vars = {
-    app_image      = "${aws_ecr_repository.repo.repository_url}:travelu-api-main"
-    app_port       = var.app_port
+    # app_image      = "${aws_ecr_repository.repo.repository_url}:latest"
+    app_image      = var.app_image
+    app_port       = var.container_port
     fargate_cpu    = var.fargate_cpu
     fargate_memory = var.fargate_memory
     aws_region     = var.aws_region
@@ -53,8 +54,8 @@ resource "aws_ecs_service" "main" {
   load_balancer {
     target_group_arn = aws_alb_target_group.app.id
     container_name   = var.app_name
-    container_port   = var.app_port
+    container_port   = var.container_port
   }
 
-  depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_execution_role]
+  # depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_execution_role]
 }

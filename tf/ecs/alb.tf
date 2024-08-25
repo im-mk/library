@@ -17,15 +17,15 @@ resource "aws_alb_target_group" "app" {
   vpc_id      = aws_vpc.aws-vpc.id
   target_type = "ip"
 
-  # health_check {
-  #   healthy_threshold   = "3"
-  #   interval            = "30"
-  #   protocol            = "HTTP"
-  #   matcher             = "200"
-  #   timeout             = "3"
-  #   path                = var.health_check_path
-  #   unhealthy_threshold = "2"
-  # }
+  health_check {
+    healthy_threshold   = "3"
+    interval            = "30"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "3"
+    path                = var.health_check_path
+    unhealthy_threshold = "2"
+  }
 
   tags = {
     Name        = "${var.app_name}-target-group"
