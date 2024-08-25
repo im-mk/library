@@ -26,7 +26,7 @@ variable "cidr" {
 }
 
 variable "az_count" {
-  default     = 1
+  default     = 2
   description = "Number of availability zones"
 }
 
@@ -37,7 +37,7 @@ variable "app_port" {
 
 variable "container_port" {
   description = "Port exposed by the docker image to redirect traffic to"
-  default     = 8080
+  default     = 8090
 }
 
 variable "health_check_path" {
