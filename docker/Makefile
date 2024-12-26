@@ -1,20 +1,20 @@
 start:
-	docker-compose up -d
+	docker compose up -d
 
 portainer:
-	docker-compose up -d portainer
+	docker compose up -d portainer
 
 mysql:
-	docker-compose up -d mysql
+	docker compose up -d mysql
 
 postgres:
-	docker-compose up -d postgres
+	docker compose up -d postgres
 
 pgadmin:
-	docker-compose up -d pgadmin
+	docker compose up -d pgadmin
 
 pg:
-	docker-compose up -d postgres pgadmin
+	docker compose up -d postgres pgadmin
 
 stop:
-	docker-compose down
+	docker compose down

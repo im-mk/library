@@ -1,0 +1,38 @@
+version: "3"
+name: nextcloud-stack
+services:
+  nc:
+    container_name: nextcloud
+    image: nextcloud:apache
+    ports:
+      - 32680:80
+    volumes:
+      - /share/Docker/nextcloud:/var/www/html
+    environment:
+      - POSTGRES_HOST=nextclouddb
+      - POSTGRES_DB=nextclouddb
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - nc
+  db:
+    container_name: nextclouddb
+    image: postgres:alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - /share/Docker/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=nextclouddb
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+    restart: unless-stopped
+    networks:
+      - nc
+
+networks:
+  nc:
+    driver: bridge
