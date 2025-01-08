@@ -14,10 +14,12 @@ dotnet new sln -o $solution
 
 cd $solution
 
-dotnet new webapi -o $solution
+dotnet new webapi --use-controllers -o $solution
 dotnet sln add ./$solution/$solution.csproj
 
 dotnet new xunit -o $solution.Tests
 dotnet sln add ./$solution.Tests/$solution.Tests.csproj
 
 dotnet add ./$solution.Tests/$solution.Tests.csproj reference ./$solution/$solution.csproj
+
+dotnet new gitignore

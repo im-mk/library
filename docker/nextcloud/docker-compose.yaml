@@ -7,12 +7,12 @@ services:
     ports:
       - 32680:80
     volumes:
-      - /share/Docker/nextcloud:/var/www/html
+      - /share/Data/nextcloud:/var/www/html
     environment:
       - POSTGRES_HOST=nextclouddb
       - POSTGRES_DB=nextclouddb
       - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=nextcloud
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: unless-stopped
     depends_on:
       - db
@@ -24,11 +24,11 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - /share/Docker/postgres:/var/lib/postgresql/data
+      - /share/Data/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=nextclouddb
       - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=nextcloud
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: unless-stopped
     networks:
       - nc
