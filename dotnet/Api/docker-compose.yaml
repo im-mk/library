@@ -1,0 +1,19 @@
+name: app-stack
+services:
+  app:
+    container_name: app
+    image: app
+    build:
+      context: .
+      dockerfile: app3/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8080:80"
+    networks:
+      - network1
+
+networks:
+  network1:
+    driver: bridge
