@@ -5,7 +5,7 @@ services:
     image: app
     build:
       context: .
-      dockerfile: WebApplication3/Dockerfile
+      dockerfile: src/WebApplication3/Dockerfile
     environment:
       - ASPNETCORE_URLS=http://+:80
       - ASPNETCORE_ENVIRONMENT=Development
@@ -16,12 +16,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
 
   postgres:
     container_name: postgres
     image: postgres
     volumes:
-      - postgres:/data/postgres
+      # - postgres:/data/postgres # enable this line to persist data
+      - ./database/init:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -33,9 +36,29 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 3
+
+  liquibase:
+    container_name: liquibase
+    image: liquibase/liquibase
+    # contexts: dev to seed data in dev environment
+    command: --defaultsFile=liquibase.properties --contexts=dev update
+    volumes:
+      - ./database/liquibase.properties:/liquibase/liquibase.properties
+      - ./database/changelog.yaml:/liquibase/changelog/changelog.yaml
+      - ./database/sql:/liquibase/changelog/sql
+      - ./database/seed:/liquibase/changelog/seed
+    environment:
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DATABASE:-appdb}
+      - LIQUIBASE_COMMAND_USERNAME=${POSTGRES_USER:-postgres}
+      - LIQUIBASE_COMMAND_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    networks:
+      - network1
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   pgadmin:
     container_name: pgadmin

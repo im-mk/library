@@ -1,5 +1,5 @@
 start:
 	docker compose up -d --build
 
-stop:
+stop:	
 	docker compose stop
