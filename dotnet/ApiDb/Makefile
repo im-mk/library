@@ -1,5 +1,6 @@
+test:
+	cd src && dotnet test
 start:
-	docker compose up -d --build
-
+	make test && docker compose up -d --build
 stop:	
 	docker compose stop
