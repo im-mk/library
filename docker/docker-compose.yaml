@@ -1,16 +1,16 @@
-name: db-stack
+name: dev-stack
 services:
-  portainer:
-    container_name: portainer
-    image: portainer/portainer
-    ports:
-      - 9000:9000
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer:/data
-    networks:
-      - network1
-    restart: unless-stopped
+  # portainer:
+  #   container_name: portainer
+  #   image: portainer/portainer
+  #   ports:
+  #     - 9000:9000
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - portainer:/data
+  #   networks:
+  #     - dbnetwork
+  #   restart: unless-stopped
 
   postgres:
     container_name: postgres
@@ -24,7 +24,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - network1
+      - dbnetwork
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
@@ -38,12 +38,15 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-pgadmin}
+      PGADMIN_CONFIG_SERVER_MODE: "False" # required to mount the servers.json file
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False" # Avoid master password prompt
     volumes:
       - pgadmin:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
     ports:
-      - "${PGADMIN_PORT:-5050}:80"
+      - "${PGADMIN_PORT:-4432}:80"
     networks:
-      - network1
+      - dbnetwork
     restart: unless-stopped
 
   mysql:
@@ -57,14 +60,14 @@ services:
       - mysql:/var/lib/mysql
       - mysql_config:/etc/mysql
     networks:
-      - network1
+      - dbnetwork
 
 networks:
-  network1:
+  dbnetwork:
     driver: bridge
 
 volumes:
-  portainer:
+  # portainer:
   postgres:
   pgadmin:
   mysql:

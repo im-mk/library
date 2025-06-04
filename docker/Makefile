@@ -1,3 +1,5 @@
+.PHONY: start stop portainer mysql postgres pgadmin pg
+
 start:
 	docker compose up -d
 
