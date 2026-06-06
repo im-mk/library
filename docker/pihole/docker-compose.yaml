@@ -1,0 +1,25 @@
+version: "3"
+name: pihole-stack
+services:
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    network_mode: bridge
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "9988:80/tcp"
+
+    environment:
+      TZ: "Europe/London"
+      WEBPASSWORD: "ChangeMe"
+      FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
+
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d
+
+    restart: unless-stopped
+
+    cap_add:
+      - NET_ADMIN
