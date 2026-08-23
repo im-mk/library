@@ -1,0 +1,153 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+
+    cap_add:
+      - NET_ADMIN
+
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+    ports:
+      - "${WEBUI_EXTERNAL_PORT}:${WEBUI_PORT}"
+      - "${TORRENTING_PORT}:${TORRENTING_PORT}/tcp"
+      - "${TORRENTING_PORT}:${TORRENTING_PORT}/udp"
+
+    environment:
+      - TZ=${TZ}
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=${OPENVPN_USER}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
+      - OPENVPN_CUSTOM_CONFIG=/gluetun/proton.ovpn
+
+    volumes:
+      - /share/Docker/gluetun:/gluetun
+
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+
+    network_mode: "service:gluetun"
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
+
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=${WEBUI_PORT}
+      - TORRENTING_PORT=${TORRENTING_PORT}
+
+    volumes:
+      - /share/Docker/qbittorrent:/config
+      - /share/Downloads:/data/downloads
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://127.0.0.1:${WEBUI_PORT}/ || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 5
+
+    stop_grace_period: 30s
+
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+
+    ports:
+      - "8989:8989"
+
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+
+    volumes:
+      - /share/Docker/sonarr:/config
+      - /share/Downloads:/data/downloads
+      - /share/Media:/data/media
+
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+
+    ports:
+      - "7878:7878"
+
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+
+    volumes:
+      - /share/Docker/radarr:/config
+      - /share/Downloads:/data/downloads
+      - /share/Media:/data/media
+
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+
+    ports:
+      - "9696:9696"
+
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+
+    volumes:
+      - /share/Docker/prowlarr:/config
+
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+
+    ports:
+      - "6767:6767"
+
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+
+    volumes:
+      - /share/Docker/bazarr:/config
+      - /share/Media:/data/media
+
+    restart: unless-stopped
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+
+    ports:
+      - "5055:5055"
+
+    environment:
+      - TZ=${TZ}
+
+    volumes:
+      - /share/Docker/jellyseerr:/app/config
+
+    restart: unless-stopped
